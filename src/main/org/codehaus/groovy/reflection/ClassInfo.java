@@ -199,13 +199,7 @@ public class ClassInfo extends ManagedConcurrentMap.Entry<Class,ClassInfo> {
         final MetaClass instanceMetaClass = getPerInstanceMetaClass(obj);
         if (instanceMetaClass != null)
             return instanceMetaClass;
-
-        lock();
-        try {
-            return getMetaClassUnderLock();
-        } finally {
-            unlock();
-        }
+        return getMetaClass();
     }
 
     public static int size () {
