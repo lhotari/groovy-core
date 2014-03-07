@@ -74,8 +74,8 @@ public final class ClassInfo extends ManagedConcurrentMap.Entry<Class,ClassInfo>
     }
 
     private void doIncVersion(Set<Class> alreadyHandled) {
-        Class theClass = getCachedClass().getTheClass();
-        if(!alreadyHandled.contains(theClass)) {
+        Class theClass = getTheClass();
+        if(theClass != null && !alreadyHandled.contains(theClass)) {
             alreadyHandled.add(theClass);
             version++;
             incVersionForDerivedOrImplementingClasses(theClass, alreadyHandled);
@@ -90,8 +90,11 @@ public final class ClassInfo extends ManagedConcurrentMap.Entry<Class,ClassInfo>
     private void incVersions(Class theClass, Set<Class> alreadyHandled, Collection<ClassInfo> classInfos) {
         if (classInfos != null) {
             for(ClassInfo classInfo : classInfos) {
-                if(classInfo != this && theClass.isAssignableFrom(classInfo.getCachedClass().getTheClass())) {
-                    classInfo.doIncVersion(alreadyHandled);
+                if(classInfo != this) {
+                    Class clazz = classInfo.getTheClass();
+                    if(clazz != null && theClass.isAssignableFrom(clazz)) {
+                        classInfo.doIncVersion(alreadyHandled);
+                    }
                 }
             }
         }
@@ -107,6 +110,11 @@ public final class ClassInfo extends ManagedConcurrentMap.Entry<Class,ClassInfo>
             it.remove();
             info.setStrongMetaClass(null);
         }
+    }
+    
+    private Class getTheClass() {
+        CachedClass cachedClass = getCachedClass();
+        return (cachedClass != null) ? cachedClass.getTheClass() : null;
     }
 
     public CachedClass getCachedClass() {
