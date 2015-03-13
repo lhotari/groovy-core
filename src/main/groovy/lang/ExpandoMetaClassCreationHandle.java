@@ -17,6 +17,8 @@ package groovy.lang;
 
 import groovy.lang.MetaClassRegistry.MetaClassCreationHandle;
 import org.codehaus.groovy.reflection.ClassInfo;
+import org.codehaus.groovy.runtime.GeneratedClosure;
+import org.codehaus.groovy.runtime.metaclass.ClosureMetaClass;
 
 /**
  * <p>A handle for the MetaClassRegistry that changes all classes loaded into the Grails VM
@@ -42,7 +44,10 @@ public class ExpandoMetaClassCreationHandle extends MetaClassCreationHandle {
      * @see groovy.lang.MetaClassRegistry.MetaClassCreationHandle#create(java.lang.Class, groovy.lang.MetaClassRegistry)
      */
     protected MetaClass createNormalMetaClass(Class theClass, MetaClassRegistry registry) {
-        if(theClass != ExpandoMetaClass.class) {
+        if (GeneratedClosure.class.isAssignableFrom(theClass)) {
+            return new ClosureMetaClass(registry, theClass);
+        }
+        else if(theClass != ExpandoMetaClass.class) {
             return new ExpandoMetaClass(theClass, true, true);
         }
         else {

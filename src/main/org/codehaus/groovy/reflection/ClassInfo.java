@@ -19,6 +19,7 @@ import groovy.lang.*;
 
 import org.codehaus.groovy.reflection.GroovyClassValue.ComputeValue;
 import org.codehaus.groovy.reflection.stdclasses.*;
+import org.codehaus.groovy.runtime.metaclass.ClosureMetaClass;
 import org.codehaus.groovy.util.*;
 import org.codehaus.groovy.vmplugin.VMPluginFactory;
 
@@ -269,7 +270,7 @@ public class ClassInfo {
         if(metaClass==null) return false;
         boolean enableGloballyOn = (mccHandle instanceof ExpandoMetaClassCreationHandle);
         boolean cachedAnswerIsEMC = (metaClass instanceof ExpandoMetaClass);
-        return (!enableGloballyOn || cachedAnswerIsEMC);
+        return (!enableGloballyOn || cachedAnswerIsEMC || metaClass instanceof ClosureMetaClass);
     }
 
     public final MetaClass getMetaClass() {
